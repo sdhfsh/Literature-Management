@@ -1,7 +1,9 @@
 package com.mcy.backend.service;
 
+import com.mcy.backend.entity.Result;
 import com.mcy.backend.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mcy.backend.vo.RegisterUserVO;
 
 /**
 * @author 30679
@@ -10,4 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserService extends IService<User> {
 
+    Result login(String username, String password);
+    Result register(RegisterUserVO registerUserVO);
 }
