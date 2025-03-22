@@ -32,4 +32,9 @@ public class UserController {
         System.out.println("用户注册信息：" + registerUserVO);
         return userService.register(registerUserVO);
     }
+
+    @RequestMapping("/logout")
+    public Result logout() {
+        return userService.logout();
+    }
 }

@@ -2,24 +2,29 @@ package com.mcy.backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mcy.backend.common.exception.UserCountLockException;
 import com.mcy.backend.common.security.MyUserDetails;
+import com.mcy.backend.entity.Menu;
 import com.mcy.backend.entity.Result;
+import com.mcy.backend.entity.Role;
 import com.mcy.backend.entity.User;
-import com.mcy.backend.service.UserService;
+import com.mcy.backend.mapper.MenuMapper;
+import com.mcy.backend.mapper.RoleMapper;
 import com.mcy.backend.mapper.UserMapper;
+import com.mcy.backend.service.MenuService;
+import com.mcy.backend.service.UserService;
 import com.mcy.backend.utils.JwtUtils;
 import com.mcy.backend.utils.RedisCache;
+import com.mcy.backend.utils.StringUtil;
 import com.mcy.backend.vo.RegisterUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author 30679
@@ -42,6 +47,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private MenuService menuService;
+
     @Override
     public Result login(String username, String password) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
@@ -56,9 +67,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String jwtToken = JwtUtils.genJwtToken(loginUser.getUsername());
 
         // 将用户信息存储在redis中
-        redisCache.setCacheObject("login:" + loginUser.getUsername(), loginUser);
+        redisCache.setCacheObject("login:" + loginUser.getUsername(), myUserDetails);
 
-        return Result.ok("登录成功").put("authorization", jwtToken);
+        // 根据用户id获取所有的角色信息
+        LambdaQueryWrapper<Role> roleLQW = new LambdaQueryWrapper<>();
+        roleLQW.inSql(Role::getId, "SELECT role_id\n" +
+                "\tFROM user_role\n" +
+                "\tWHERE user_id = " + loginUser.getId());
+        List<Role> roles = roleMapper.selectList(roleLQW);
+
+        Set<Menu> menuSet = new HashSet<>();
+        for (Role role : roles) {
+            LambdaQueryWrapper<Menu> menuLQW = new LambdaQueryWrapper<>();
+            menuLQW.inSql(Menu::getId, "SELECT  menu_id\n" +
+                    "\tFROM role_menu\n" +
+                    "\tWHERE role_id  = " + role.getId());
+            List<Menu> menus = menuService.list(menuLQW);
+            for (Menu menu : menus) {
+                menuSet.add(menu);
+            }
+        }
+        List<Menu> menuList = new ArrayList<>(menuSet);
+
+        // 排序
+        menuList.sort(Comparator.comparing(Menu::getOrderNum));
+
+        // 转为菜单树
+        List<Menu> endMenuList = menuService.buildTreeMenu(menuList);
+
+        return Result.ok("登录成功").put("authorization", jwtToken).put("currentUser", loginUser).put("menuList", endMenuList);
     }
 
     @Override
@@ -126,6 +163,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         return Result.error(400, "注册失败");
+    }
+
+    @Override
+    public Result logout() {
+        // 从 SecurityContextHolder 中获取用户名
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = (String) authentication.getPrincipal();
+        // 删除redis中的值
+        boolean result = redisCache.deleteObject("login:" + username);
+        return Result.ok("退出登录~~");
     }
 }
 

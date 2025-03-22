@@ -6,6 +6,7 @@ import com.mcy.backend.service.UserService;
 import com.mcy.backend.utils.JwtUtils;
 import com.mcy.backend.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,6 +17,7 @@ public class TestController {
     @Autowired
     private UserService userService;
 
+    @PreAuthorize("hasAuthority('ROLE_admin')")
     @GetMapping("/user/{id}")
     public Result getUser(@PathVariable("id") Integer id, @RequestHeader(required = false) String token) {
         if (StringUtil.isNotEmpty(token)) {

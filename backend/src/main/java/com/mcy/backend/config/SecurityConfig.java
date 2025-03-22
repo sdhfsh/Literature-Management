@@ -30,12 +30,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     private static final String[] URL_WHITELIST = {
-            "/user/**",
-            "/login",
-            "/logout",
+            "/user/login",
+//            "/login",
+//            "/logout",
             "/captcha",
             "/password",
             "/image/**"
+//            "/test/**"
     };
 
     @Bean
@@ -70,7 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 拦截规则配置
                 .and()
                 .authorizeRequests()
-                .antMatchers(URL_WHITELIST).anonymous()  // 白名单 放行
+                .antMatchers(URL_WHITELIST).anonymous()
+//                .antMatchers("/test/**").permitAll()// 白名单 放行
                 .anyRequest().authenticated();
 
 

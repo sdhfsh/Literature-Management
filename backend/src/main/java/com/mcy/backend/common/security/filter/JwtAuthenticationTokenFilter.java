@@ -1,9 +1,8 @@
 package com.mcy.backend.common.security.filter;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mcy.backend.common.constant.JwtConstant;
+import com.mcy.backend.common.security.MyUserDetails;
 import com.mcy.backend.entity.CheckResult;
-import com.mcy.backend.entity.User;
 import com.mcy.backend.mapper.UserMapper;
 import com.mcy.backend.utils.JwtUtils;
 import com.mcy.backend.utils.RedisCache;
@@ -67,11 +66,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 解析 token中的username
         Claims claims = JwtUtils.parseJWT(token);  // 获取主体信息
         String username = claims.getSubject();     // subject就是用户名
-        // 从数据库中获取用户信息
-//        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-//        lambdaQueryWrapper.eq(User::getUsername, username);
-//        User loginUser = userMapper.selectOne(lambdaQueryWrapper);
-        User loginUser = redisCache.getCacheObject("login:" + username);
+
+        MyUserDetails loginUser = redisCache.getCacheObject("login:" + username);
         if (Objects.isNull(loginUser)) {
             throw new JwtException("用户未登录");
         }
@@ -79,7 +75,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         // 存入SecurityHolder
         // TODO 获取权限信息
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword(), null);
+                new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword(), loginUser.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 

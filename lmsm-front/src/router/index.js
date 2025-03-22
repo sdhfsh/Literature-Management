@@ -2,6 +2,11 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
+        path: '/test',
+        name: '测试',
+        component: () => import('@/views/test/index.vue')
+    },
+    {
         path: '/',
         name: '首页',
         component: () => import('../layout')
