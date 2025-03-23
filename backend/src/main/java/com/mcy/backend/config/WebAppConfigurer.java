@@ -3,6 +3,7 @@ package com.mcy.backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -25,5 +26,10 @@ public class WebAppConfigurer implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/image/userAvatar/**")
+                .addResourceLocations("file:/D:/Projects/基于共享机制的文献管理系统/Literature-Management/lmsm-front/userAvatar/");
+    }
 
 }

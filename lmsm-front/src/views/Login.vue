@@ -63,9 +63,9 @@ const handleLogin = () => {
     if (valid) {
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
       if (loginForm.value.rememberMe) {
-        Cookies.set("username", loginForm.value.username, { expires: 30 });
-        Cookies.set("password", encrypt(loginForm.value.password), { expires: 30 });
-        Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 });
+        Cookies.set("username", loginForm.value.username, {expires: 30});
+        Cookies.set("password", encrypt(loginForm.value.password), {expires: 30});
+        Cookies.set("rememberMe", loginForm.value.rememberMe, {expires: 30});
       } else {
         // 否则移除
         Cookies.remove("username");
@@ -77,9 +77,16 @@ const handleLogin = () => {
       let data = result.data;
       if (data.code == 200) {
         const token = data.authorization;
+        const menuList = data.menuList;
+        const currentUser = data.currentUser;
+        console.log("menuList = " + menuList);
         store.commit('SET_TOKEN', token)
+        store.commit('SET_MENULIST', menuList)
+        store.commit('SET_USERINFO', currentUser)
+        console.log("存入 Vuex 的 Token:", store.getters.GET_TOKEN)
         router.replace("/")
-        ElMessage.success(data.msg);
+        ElMessage.success(data.msg
+        );
       } else {
         ElMessage.error(data.msg);
       }
@@ -101,6 +108,7 @@ function getCookie() {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
   };
 }
+
 getCookie();
 </script>
 
@@ -114,7 +122,7 @@ a {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url("../../assets/images/login-background.png");
+  background-image: url("../assets/images/login-background.png");
   background-size: cover;
 }
 

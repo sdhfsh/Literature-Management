@@ -2,24 +2,36 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
+        path: '/',
+        name: '主页',
+        component: () => import('../layout'),
+        redirect: '/index',
+        children: [
+            {
+                path: '/index',
+                name: '首页',
+                component: () => import('@/views/index/index')
+            }, {
+                path: '/userCenter',
+                name: '个人中心',
+                component: () => import('@/views/userCenter/index')
+            },
+        ]
+    },
+    {
         path: '/test',
         name: '测试',
         component: () => import('@/views/test/index.vue')
     },
     {
-        path: '/',
-        name: '首页',
-        component: () => import('../layout')
-    },
-    {
         path: '/login',
         name: 'login',
-        component: () => import('../views/user/Login.vue')
+        component: () => import('@/views/Login.vue')
     },
     {
         path: '/register',
         name: 'register',
-        component: () => import('../views/user/Register.vue')
+        component: () => import('@/views/Register.vue')
     },
     {
         path: '/:pathMatch(.*)*',  // 通配符匹配所有未定义的路径

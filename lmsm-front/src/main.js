@@ -11,6 +11,9 @@ import '@/assets/styles/reset.css'
 
 import SvgIcon from '@/icons'
 
+// 导入路由守卫功能
+import '@/router/permission'
+
 const app = createApp(App)
 SvgIcon(app)
 app.use(store)
