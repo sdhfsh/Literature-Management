@@ -88,4 +88,23 @@ public class User implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 额外属性，不需要映射到数据库
+     * 所属角色，多个角色逗号隔开
+     */
+    @TableField(exist = false)
+    private String roles;
+
+    /**
+     * 旧密码
+     */
+    @TableField(exist = false)
+    private String oldPassword;
+
+    /**
+     * 确认新密码
+     */
+    @TableField(exist = false)
+    private String newPassword;
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
-    <!-- 展开/收缩菜单  -->
-    <Hamburger :is-active="isSidebarOpened" @toggle-click="toggleSideBar" />
+<!--    &lt;!&ndash; 展开/收缩菜单  &ndash;&gt;-->
+<!--    <Hamburger :is-active="isSidebarOpened" @toggle-click="toggleSideBar" />-->
     <!-- 面包屑 -->
     <Breadcrumb />
     <div class="navbar-right">

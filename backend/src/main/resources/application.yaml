@@ -23,3 +23,5 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
 
+avatarImagesFilePath: D:/Projects/基于共享机制的文献管理系统/Literature-Management/lmsm-front/userAvatar/
+

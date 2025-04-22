@@ -8,7 +8,9 @@
     </span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>个人中心</el-dropdown-item>
+        <el-dropdown-item>
+          <router-link :to="{name: '个人中心'}">个人中心</router-link>
+        </el-dropdown-item>
         <el-dropdown-item divided @click="logout">注销退出</el-dropdown-item>
       </el-dropdown-menu>
     </template>
@@ -28,6 +30,8 @@ const logout = async () => {
   let result = await requestUtil.get("/user/logout");
   let data = result.data;
   if (data.code == 200) {
+    store.commit("RESET_TABS")
+    store.commit("SET_ROUTES_STATE", false)
     store.dispatch('logout')
     ElMessage.success(data.msg);
   } else {

@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 30679
@@ -87,6 +88,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 menuSet.add(menu);
             }
         }
+
+        loginUser.setRoles(roles.stream().map(Role::getName).collect(Collectors.joining(",")));
+
+
         List<Menu> menuList = new ArrayList<>(menuSet);
 
         // 排序

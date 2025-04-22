@@ -11,6 +11,12 @@
       <el-icon>
         <home-filled/>
       </el-icon>
+      <span>文献管理系统</span>
+    </el-menu-item>
+    <el-menu-item index="/index">
+      <el-icon>
+        <home-filled/>
+      </el-icon>
       <span>首页</span>
     </el-menu-item>
     <el-sub-menu :index="menu.path" v-for="menu in menuList">
@@ -20,7 +26,7 @@
         </el-icon>
         <span>{{ menu.name }}</span>
       </template>
-      <el-menu-item :index="item.path" v-for="item in menu.children">
+      <el-menu-item :index="item.path" v-for="item in menu.children" @click="openTab(item)">
         <el-icon>
           <svg-icon :icon="item.icon"/>
         </el-icon>
@@ -47,6 +53,10 @@ import {ref} from 'vue'
 import store from '@/store'
 
 const menuList = ref(store.getters.GET_MENULIST);
+
+const openTab = (item) => {
+  store.commit("ADD_TABS", item)
+}
 
 </script>
 
