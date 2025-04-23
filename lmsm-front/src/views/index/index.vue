@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    欢迎使用，Java1234 通用权限系统 ！
+    欢迎使用，文献管理系统 ！
   </div>
 </template>
 <script>

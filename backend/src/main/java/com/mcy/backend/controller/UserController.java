@@ -1,6 +1,7 @@
 package com.mcy.backend.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.mcy.backend.entity.PageBean;
 import com.mcy.backend.entity.Result;
 import com.mcy.backend.entity.User;
 import com.mcy.backend.service.UserService;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -134,5 +136,22 @@ public class UserController {
         currentUser.setAvatar(user.getAvatar());
         userService.updateById(currentUser);
         return Result.ok("更换成功");
+    }
+
+    /**
+     * 根据条件，分页查询用户信息
+     * @param pageBean
+     * @return
+     */
+    @PostMapping("/list")
+    @PreAuthorize("hasAuthority('system:user:query')")
+    public Result list(@RequestBody PageBean pageBean) {
+        Page<User> pageResult = userService.page(new Page<>(pageBean.getPageNum(), pageBean.getPageSize()));
+        List<User> userList = pageResult.getRecords();
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("userList", userList);
+        resultMap.put("total", pageResult.getTotal());
+        return Result.ok(resultMap);
     }
 }
