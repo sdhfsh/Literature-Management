@@ -3,12 +3,10 @@ package com.mcy.backend.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mcy.backend.entity.PageBean;
-import com.mcy.backend.entity.Result;
-import com.mcy.backend.entity.Role;
-import com.mcy.backend.entity.User;
+import com.mcy.backend.entity.*;
 import com.mcy.backend.mapper.UserMapper;
 import com.mcy.backend.service.RoleService;
+import com.mcy.backend.service.UserRoleService;
 import com.mcy.backend.service.UserService;
 import com.mcy.backend.utils.DateUtil;
 import com.mcy.backend.utils.StringUtil;
@@ -19,14 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -37,6 +33,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private UserRoleService userRoleService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -205,5 +204,19 @@ public class UserController {
         resultMap.put("userList", userList);
         resultMap.put("total", pageResult.getTotal());
         return Result.ok(resultMap);
+    }
+
+    /**
+     * 删除 / 批量删除
+     * @param ids
+     * @return
+     */
+    @Transactional
+    @PostMapping("/delete")
+    @PreAuthorize("hasAuthority('system:user:delete')")
+    public Result delete(@RequestBody Integer[] ids) {
+        userService.removeByIds(Arrays.asList(ids));
+        userRoleService.remove(new QueryWrapper<UserRole>().in("user_id", ids));
+        return Result.ok();
     }
 }
