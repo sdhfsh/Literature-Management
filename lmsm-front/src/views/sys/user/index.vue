@@ -1,7 +1,54 @@
 <template>
   <div class="app-container">
+    <el-row :gutter="20" class="header">
+      <el-col :span="7">
+        <el-input placeholder="请输入用户名..." v-model="queryForm.query" clearable
+        ></el-input>
+      </el-col>
+      <el-button type="primary" :icon="Search" @click="initUserList">搜索</el-button>
+      <el-button type="success" :icon="DocumentAdd" @click="handleDialogValue()">新增</el-button>
+    </el-row>
     <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="username" label="用户名" width="180"/>
+      <el-table-column type="selection" width="55"/>
+      <el-table-column prop="avatar" label="头像" width="80" align="center">
+        <template v-slot="scope">
+          <img :src="getServerUrl()+'image/userAvatar/'+scope.row.avatar"
+               width="50" height="50"/>
+        </template>
+      </el-table-column>
+      <el-table-column prop="username" label="用户名" width="100"
+                       align="center"/>
+      <el-table-column prop="roles" label="拥有角色" width="200" align="center">
+        <template v-slot="scope">
+          <el-tag size="small" type="warning" v-for="item in
+scope.row.roleList"> {{ item.name }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="email" label="邮箱" width="200" align="center"/>
+      <el-table-column prop="phone" label="手机号" width="120"
+                       align="center"/>
+      <el-table-column prop="status" label="状态？" width="200" align="center"
+      >
+        <template v-slot="{row}">
+          <el-switch v-model="row.status" @change="statusChangeHandle(row)"
+                     active-text="正常"
+                     inactive-text="禁用" active-value="0" inactive-value="1">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="createAt" label="创建时间" width="200"
+                       align="center"/>
+      <el-table-column prop="loginDate" label="最后登录时间" width="200"
+                       align="center"/>
+      <el-table-column prop="remark" label="备注"/>
+      <el-table-column prop="action" label="操作" width="400" fixed="right"
+                       align="center">
+        <template v-slot="scope">
+          <el-button type="primary" :icon="Tools">分配角色</el-button>
+          <el-button v-if="scope.row.username!=='machaoyue'" type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)"/>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
   <el-pagination
@@ -13,11 +60,14 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
   />
+  <Dialog v-model="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>
 </template>
 
 <script setup>
+import {Search, Delete, DocumentAdd, Edit, Tools, RefreshRight} from '@element-plus/icons-vue'
 import requestUtil, {getServerUrl} from "@/util/request";
 import {ref} from 'vue'
+import Dialog from './components/dialog'
 
 const tableData = ref([])
 
@@ -28,6 +78,22 @@ const queryForm = ref({
   pageNum: 1,
   pageSize: 1
 })
+
+// 弹窗需要的数据
+const dialogVisible = ref(false)
+const dialogTitle = ref("")
+const id = ref(-1)
+
+const handleDialogValue = (userId) => {
+  if (userId) {
+    id.value = userId;
+    dialogTitle.value = "用户修改"
+  } else {
+    id.value = -1;
+    dialogTitle.value = "用户添加"
+  }
+  dialogVisible.value = true
+}
 
 const initUserList = async () => {
   const res = await requestUtil.post("user/list", queryForm.value);
@@ -54,22 +120,25 @@ const handleCurrentChange = (pageNum) => {
 </script>
 
 <style scoped lang="scss">
-.header{
+.header {
   padding-bottom: 16px;
   box-sizing: border-box;
 }
-.el-pagination{
+
+.el-pagination {
   float: right;
   padding: 20px;
   box-sizing: border-box;
 }
-::v-deep th.el-table__cell{
+
+::v-deep th.el-table__cell {
   word-break: break-word;
   background-color: #f8f8f9 !important;
   color: #515a6e;
   height: 40px;
   font-size: 13px;
 }
+
 .el-tag--small {
   margin-left: 5px;
 }
