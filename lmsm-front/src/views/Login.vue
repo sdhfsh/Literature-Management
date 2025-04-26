@@ -90,7 +90,10 @@ const handleLogin = () => {
       } else {
         ElMessage.error(data.msg);
       }
-      console.log(result.data);
+      if (result.data) {
+        console.log(result.data); // 正常处理
+      }
+      // console.log(result.data);
     } else {
       console.log("验证失败");
     }

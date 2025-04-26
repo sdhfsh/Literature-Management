@@ -1,5 +1,6 @@
 package com.mcy.backend.utils;
 
+import com.mcy.backend.common.constant.Constant;
 import com.mcy.backend.common.constant.JwtConstant;
 import com.mcy.backend.entity.CheckResult;
 import io.jsonwebtoken.*;
@@ -47,7 +48,7 @@ public class JwtUtils {
      * @return
      */
     public static String genJwtToken(String username){
-        return createJWT(username,username,60*60*1000);
+        return createJWT(username,username, Constant.REDIS_KEY_EXPIRATION_DATA);
     }
 
     /**

@@ -50,13 +50,21 @@ scope.row.roleList"> {{ item.name }}
       <el-table-column prop="action" label="操作" width="400" fixed="right"
                        align="center">
         <template v-slot="scope">
-          <el-button type="primary" :icon="Tools">分配角色</el-button>
+          <el-button type="primary" :icon="Tools" @click="handleRoleDialogValue(scope.row.id,scope.row.roleList)">
+            分配角色
+          </el-button>
           <el-button v-if="scope.row.username!=='machaoyue'" type="primary" :icon="Edit"
                      @click="handleDialogValue(scope.row.id)"/>
           <el-popconfirm v-if="scope.row.username!='machaoyue'" title="您确定要删除这条记录吗？"
                          @confirm="handleDelete(scope.row.id)">
             <template #reference>
               <el-button type="danger" :icon="Delete"/>
+            </template>
+          </el-popconfirm>
+          <el-popconfirm v-if="scope.row.username!='machaoyue'" title="您确定要对这个用户重置密码吗？"
+                         @confirm="handleResetPassword(scope.row.id)">
+            <template #reference>
+              <el-button type="warning" :icon="RefreshRight">重置密码</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -73,6 +81,8 @@ scope.row.roleList"> {{ item.name }}
       @current-change="handleCurrentChange"
   />
   <Dialog v-model="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>
+  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :id="id" :roleDialogVisible="roleDialogVisible" @initUserList="initUserList">
+  </RoleDialog>
 </template>
 
 <script setup>
@@ -80,6 +90,7 @@ import {Search, Delete, DocumentAdd, Edit, Tools, RefreshRight} from '@element-p
 import requestUtil, {getServerUrl} from "@/util/request";
 import {ref} from 'vue'
 import Dialog from './components/dialog'
+import RoleDialog from './components/roleDialog'
 import {ElMessage, ElMessageBox} from 'element-plus'
 
 const tableData = ref([])
@@ -89,7 +100,7 @@ const total = ref(0)
 const queryForm = ref({
   query: '',
   pageNum: 1,
-  pageSize: 1
+  pageSize: 10
 })
 
 // 弹窗需要的数据
@@ -101,6 +112,10 @@ const id = ref(-1)
 const delBtnStatus = ref(true)
 // 定义 选中的行
 const multipleSelection = ref([])
+
+// 分配角色弹窗
+const sysRoleList = ref([])
+const roleDialogVisible = ref(false)
 
 const handleSelectionChange = (selection) => {
   console.log("勾选了")
@@ -147,6 +162,10 @@ const handleDialogValue = (userId) => {
 }
 
 const initUserList = async () => {
+  if (!sessionStorage.getItem('token')) {
+    console.log("无token，取消请求 user/list");
+    return;
+  }
   const res = await requestUtil.post("user/list", queryForm.value);
   tableData.value = res.data.userList;
   total.value = res.data.total;
@@ -167,6 +186,47 @@ const handleSizeChange = (pageSize) => {
 const handleCurrentChange = (pageNum) => {
   queryForm.value.pageNum = pageNum;
   initUserList();
+}
+
+// 重置密码
+const handleResetPassword = async (id) => {
+  const res = await requestUtil.get("user/resetPassword/" + id)
+  if (res.data.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: '执行成功!'
+    })
+    initUserList();
+  } else {
+    ElMessage({
+      type: 'error',
+      message: res.data.msg,
+    })
+  }
+}
+
+const statusChangeHandle = async (row) => {
+  let res = await
+      requestUtil.get("user/updateStatus/" + row.id + "/status/" + row.status);
+  if (res.data.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: '执行成功!'
+    })
+  } else {
+    ElMessage({
+      type: 'error',
+      message: res.data.msg,
+    })
+    initUserList();
+  }
+}
+
+const handleRoleDialogValue = (userId, roleList) => {
+  console.log("userId=" + userId)
+  id.value = userId;
+  sysRoleList.value = roleList;
+  roleDialogVisible.value = true
 }
 </script>
 

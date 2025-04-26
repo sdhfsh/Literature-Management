@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mcy.backend.entity.UserRole;
 import com.mcy.backend.service.UserRoleService;
 import com.mcy.backend.mapper.UserRoleMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author 30679
@@ -15,6 +18,16 @@ import org.springframework.stereotype.Service;
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
     implements UserRoleService{
 
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Override
+    public void insert(List<UserRole> userRoleList) {
+        for (UserRole userRole : userRoleList) {
+            userRole.setId(null);
+            userRoleMapper.insert(userRole);
+        }
+    }
 }
 
 

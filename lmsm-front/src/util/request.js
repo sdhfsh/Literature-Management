@@ -1,13 +1,14 @@
 // 引入axios
 import axios from 'axios';
 import store from '@/store'
+import {ElMessage} from 'element-plus'
 
-let baseUrl="http://localhost:9999/";
+let baseUrl = "http://localhost:9999/";
 // 创建axios实例
 const httpService = axios.create({
     // url前缀-'http:xxx.xxx'
     // baseURL: process.env.BASE_API, // 需自定义
-    baseURL:baseUrl,
+    baseURL: baseUrl,
     // 请求超时时间
     timeout: 3000 // 需自定义
 });
@@ -16,9 +17,9 @@ const httpService = axios.create({
 // 添加请求拦截器
 httpService.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
-    //config.headers.token=window.sessionStorage.getItem('token');
-    console.log("store="+store.getters.GET_TOKEN)
-    config.headers.token=store.getters.GET_TOKEN
+    config.headers.token = window.sessionStorage.getItem('token');
+    console.log("store=" + store.getters.GET_TOKEN)
+    // config.headers.token=store.getters.GET_TOKEN
     config.headers["Content-Type"] = "application/json"
     return config;
 }, function (error) {
@@ -32,6 +33,24 @@ httpService.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     // 对响应错误做点什么
+    if (error.response) {
+        const status = error.response.status;
+
+        if (status === 401 || status === 403) {
+            // 使用 ElMessage 提示
+            ElMessage.error(error.response.data.msg);
+
+            // 可选：清除 token 并跳转到登录页
+            sessionStorage.clear();
+            setTimeout(() => {
+                // 不能使用 router.replace("/login"); 因为跳转后还能回到之前的页面
+                window.location.replace("/login");
+            }, 1000); // 1秒后跳转
+
+            return Promise.resolve({data: {}});
+        }
+    }
+
     return Promise.reject(error);
 });
 
@@ -88,7 +107,7 @@ export function fileUpload(url, params = {}) {
             url: url,
             method: 'post',
             data: params,
-            headers: { 'Content-Type': 'multipart/form-data' }
+            headers: {'Content-Type': 'multipart/form-data'}
         }).then(response => {
             resolve(response);
         }).catch(error => {
@@ -97,7 +116,7 @@ export function fileUpload(url, params = {}) {
     });
 }
 
-export function getServerUrl(){
+export function getServerUrl() {
     return baseUrl;
 }
 

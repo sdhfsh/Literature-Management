@@ -69,7 +69,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         MyUserDetails loginUser = redisCache.getCacheObject("login:" + username);
         if (Objects.isNull(loginUser)) {
-            throw new JwtException("用户未登录");
+//            throw new JwtException("用户未登录");
+            // 响应 401 未登录
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"code\":401,\"msg\":\"用户未登录\"}");
+            return;
         }
 
         // 存入SecurityHolder

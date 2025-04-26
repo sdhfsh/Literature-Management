@@ -3,6 +3,8 @@ package com.mcy.backend.service;
 import com.mcy.backend.entity.UserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author 30679
 * @description 针对表【user_role】的数据库操作Service
@@ -10,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserRoleService extends IService<UserRole> {
 
+    void insert(List<UserRole> userRoleList);
 }

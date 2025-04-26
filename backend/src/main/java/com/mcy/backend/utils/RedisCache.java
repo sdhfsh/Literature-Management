@@ -1,5 +1,6 @@
 package com.mcy.backend.utils;
 
+import com.mcy.backend.common.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -25,7 +26,7 @@ public class RedisCache
      */
     public <T> void setCacheObject(final String key, final T value)
     {
-        redisTemplate.opsForValue().set(key, value);
+        redisTemplate.opsForValue().set(key, value, Constant.REDIS_KEY_EXPIRATION_DATA, TimeUnit.MILLISECONDS);
     }
 
     /**
