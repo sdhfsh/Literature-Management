@@ -3,13 +3,8 @@ package com.mcy.backend.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mcy.backend.common.security.MyUserDetails;
-import com.mcy.backend.entity.Menu;
-import com.mcy.backend.entity.Result;
-import com.mcy.backend.entity.Role;
-import com.mcy.backend.entity.User;
-import com.mcy.backend.mapper.MenuMapper;
-import com.mcy.backend.mapper.RoleMapper;
-import com.mcy.backend.mapper.UserMapper;
+import com.mcy.backend.entity.*;
+import com.mcy.backend.mapper.*;
 import com.mcy.backend.service.MenuService;
 import com.mcy.backend.service.UserService;
 import com.mcy.backend.utils.JwtUtils;
@@ -54,12 +49,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Autowired
     private MenuService menuService;
 
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
     @Override
     public Result login(String username, String password) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         if (Objects.isNull(authenticate)) {
+//            return Result.error("用户名或密码错误");
             throw new RuntimeException("登录失败");
         }
 
@@ -107,8 +106,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Result register(RegisterUserVO registerUserVO) {
         String username = registerUserVO.getUsername();
         String password = registerUserVO.getPassword();
-        String email = registerUserVO.getPassword();
-        String phone = registerUserVO.getPassword();
+        String email = registerUserVO.getEmail();
+        String phone = registerUserVO.getPhone();
 
         // 1. 用户名校验（非空，长度 3-20，允许字母、数字、下划线）
         if (username == null || username.trim().isEmpty()) {
@@ -164,6 +163,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         registerUser.setEmail(email);
         int insert = userMapper.insert(registerUser);
         if (insert > 0) {
+            // 新注册用户为普通角色
+            userRoleMapper.insert(new UserRole(null, registerUser.getId(), 2));
             return Result.ok("注册成功");
         }
 

@@ -1,7 +1,6 @@
 <template>
   <div class="footer">
-    Copyright © 2025-2025 machaoyue 版权所有&nbsp;&nbsp;<a
-      href="http://www.baidu.com" target="_blank">baidu</a>
+    Copyright © 2025-_ machaoyue 版权所有&nbsp;&nbsp;
   </div>
 </template>
 

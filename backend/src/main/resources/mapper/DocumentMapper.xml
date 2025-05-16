@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mcy.backend.mapper.DocumentMapper">
+
+    <resultMap id="BaseResultMap" type="com.mcy.backend.entity.Document">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="author" column="author" jdbcType="VARCHAR"/>
+            <result property="excerpt" column="excerpt" jdbcType="VARCHAR"/>
+            <result property="journal" column="journal" jdbcType="VARCHAR"/>
+            <result property="publicationDate" column="publication_date" jdbcType="DATE"/>
+            <result property="publisher" column="publisher" jdbcType="VARCHAR"/>
+            <result property="volume" column="volume" jdbcType="VARCHAR"/>
+            <result property="issue" column="issue" jdbcType="VARCHAR"/>
+            <result property="pages" column="pages" jdbcType="VARCHAR"/>
+            <result property="doi" column="doi" jdbcType="VARCHAR"/>
+            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+            <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+            <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+            <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+            <result property="ownerId" column="owner_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,author,
+        excerpt,journal,publication_date,
+        publisher,volume,issue,
+        pages,doi,url,
+        type,file_path,file_type,
+        created_at,updated_at,owner_id
+    </sql>
+</mapper>

@@ -1,11 +1,9 @@
 package com.mcy.backend.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mcy.backend.common.constant.Constant;
 import com.mcy.backend.entity.*;
-import com.mcy.backend.mapper.UserMapper;
 import com.mcy.backend.service.RoleService;
 import com.mcy.backend.service.UserRoleService;
 import com.mcy.backend.service.UserService;
@@ -78,7 +76,6 @@ public class UserController {
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('system:user:edit')" + "||" + "hasAuthority('system:user:add')")
     public Result save(@RequestBody User user) {
-        System.out.println();
         if (user.getId() == null || user.getId() == -1) {
             // 如果用户id不存在，则为新增用户
             user.setCreateAt(new Date());
@@ -290,4 +287,5 @@ public class UserController {
         }
         return Result.ok();
     }
+
 }

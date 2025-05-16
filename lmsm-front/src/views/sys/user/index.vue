@@ -25,8 +25,8 @@
                        align="center"/>
       <el-table-column prop="roles" label="拥有角色" width="200" align="center">
         <template v-slot="scope">
-          <el-tag size="small" type="warning" v-for="item in
-scope.row.roleList"> {{ item.name }}
+          <el-tag size="small" type="warning" v-for="item in scope.row.roleList">
+            {{ item.name }}
           </el-tag>
         </template>
       </el-table-column>
@@ -42,8 +42,11 @@ scope.row.roleList"> {{ item.name }}
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column prop="createAt" label="创建时间" width="200"
-                       align="center"/>
+      <el-table-column prop="createAt" label="创建时间" width="200" align="center">
+<!--        <template #default="scope">-->
+<!--          {{ formatDate(scope.row.createdAt) }}-->
+<!--        </template>-->
+      </el-table-column>
       <el-table-column prop="loginDate" label="最后登录时间" width="200"
                        align="center"/>
       <el-table-column prop="remark" label="备注"/>
@@ -81,7 +84,8 @@ scope.row.roleList"> {{ item.name }}
       @current-change="handleCurrentChange"
   />
   <Dialog v-model="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>
-  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :id="id" :roleDialogVisible="roleDialogVisible" @initUserList="initUserList">
+  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :id="id" :roleDialogVisible="roleDialogVisible"
+              @initUserList="initUserList">
   </RoleDialog>
 </template>
 
@@ -92,6 +96,7 @@ import {ref} from 'vue'
 import Dialog from './components/dialog'
 import RoleDialog from './components/roleDialog'
 import {ElMessage, ElMessageBox} from 'element-plus'
+import {formatDate} from "@/util/formatDate";
 
 const tableData = ref([])
 

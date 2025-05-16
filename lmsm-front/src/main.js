@@ -22,4 +22,11 @@ app.use(router)
 app.use(ElementPlus, {
     locale: zhCn,
 })
+
+// 注册所有element-plus图标组件
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
+
 app.mount('#app')

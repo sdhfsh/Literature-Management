@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] URL_WHITELIST = {
             "/user/login",
+            "/user/register",
 //            "/login",
 //            "/logout",
             "/captcha",

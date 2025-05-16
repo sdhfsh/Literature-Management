@@ -23,6 +23,7 @@ public class WebAppConfigurer implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE","OPTIONS")
                 .allowedHeaders("*")  // 允许的请求头
+//                .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
                 .maxAge(3600);
     }
 
@@ -30,6 +31,10 @@ public class WebAppConfigurer implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/image/userAvatar/**")
                 .addResourceLocations("file:/D:/Projects/基于共享机制的文献管理系统/Literature-Management/lmsm-front/userAvatar/");
+
+        // 映射文献下载目录
+//        registry.addResourceHandler("/file/download/**")
+//                .addResourceLocations("file:/D:/Projects/基于共享机制的文献管理系统/Literature-Management/backend/documents/");
     }
 
 }

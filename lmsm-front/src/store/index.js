@@ -12,7 +12,7 @@ export default createStore({
         editableTabs: [
             {
                 title: '首页',
-                name: 'index'
+                name: '/index'
             }
         ]
     },
@@ -49,11 +49,11 @@ export default createStore({
             state.editableTabsValue = tab.path
         },
         RESET_TABS: (state, tab) => {
-            state.editableTabsValue = "/index"
+            state.editableTabsValue = '/index'
             state.editableTabs = [
                 {
                     title: '首页',
-                    name: 'index'
+                    name: '/index'
                 }
             ]
         }

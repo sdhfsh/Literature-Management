@@ -33,12 +33,12 @@ const routes = [
         name: 'register',
         component: () => import('@/views/Register.vue')
     }
-    // ,
-    // {
-    //     path: '/:pathMatch(.*)*',  // 通配符匹配所有未定义的路径
-    //     name: 'NotFound',
-    //     component: () => import('../views/error/404.vue') // 你的 404 页面
-    // }
+    ,
+    {
+        path: '/:pathMatch(.*)*',  // 通配符匹配所有未定义的路径
+        name: '404',
+        component: () => import('../views/error/404.vue') // 你的 404 页面
+    }
 ]
 
 const router = createRouter({

@@ -16,9 +16,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalException {
 
-    @ExceptionHandler(value = RuntimeException.class)
-    public Result handler(RuntimeException e) {
-        log.error("运行时异常----------{}" + e.getMessage());
+    @ExceptionHandler(value = Exception.class)
+    public Result handler(Exception e) {
+        log.error("运行时异常----------{}", e.getMessage());
+        if (e.getMessage().equals("Bad credentials")) {
+            return Result.error("用户名或密码错误");
+        }
         return Result.error(e.getMessage());
     }
 

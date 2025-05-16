@@ -3,6 +3,8 @@
     <div class="error-box">
       <div class="error-code">404</div>
       <div class="error-desc">啊哦~ 你所访问的页面不存在</div>
+      <div class="error-desc">或</div>
+      <div class="error-desc">所访问页面属于内部权限页面，无法直接访问</div>
       <div class="error-handle">
         <router-link to="/">
           <el-button type="primary" size="large">返回首页</el-button>
