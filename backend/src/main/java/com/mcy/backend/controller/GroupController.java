@@ -142,17 +142,17 @@ public class GroupController {
                 new LambdaQueryWrapper<UserCrowd>().eq(UserCrowd::getUserId, loginUser.getId())
         );
 
-        // 用户未加入小组
-        if (userCrowd == null) {
-            return Result.error(407, "您尚未加入小组");
-        }
-
         CrowdApplication application = crowdApplicationService.getOne(
                 new LambdaQueryWrapper<CrowdApplication>().eq(CrowdApplication::getUserId, loginUser.getId())
         );
 
-        // 没有申请记录，说明是直接加入的
+        // 没有申请记录，说明要么加入过小组，要么没加入过并且没有申请加入
         if (application == null) {
+            // 用户未加入小组
+            if (userCrowd == null) {
+                return Result.error(407, "您尚未加入小组");
+            }
+
             // 根据当前用户所在小组，查询小组信息
             Crowd joinCrowd = crowdService.getById(userCrowd.getCrowdId());
             int members = userCrowdService.count(
@@ -195,6 +195,14 @@ public class GroupController {
         User loginUser = userService.getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
         // 获取当前登录用户的小组
         UserCrowd userCrowd = userCrowdService.getOne(new LambdaQueryWrapper<UserCrowd>().eq(UserCrowd::getUserId, loginUser.getId()));
+        if (userCrowd == null) {
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("docList", null);
+            resultMap.put("total", 0);
+            System.out.println(resultMap);
+            return Result.ok(resultMap);
+        }
+
         // 获取当前登录用户所属小组的全部成员id
         List<UserCrowd> list = userCrowdService.list(new LambdaQueryWrapper<UserCrowd>().eq(UserCrowd::getCrowdId, userCrowd.getCrowdId()));
         List<Integer> crowdMemberIds = list.stream().map(c -> c.getUserId()).collect(Collectors.toList());
